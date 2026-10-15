@@ -162,4 +162,10 @@ result = {
 }
 OUT.parent.mkdir(exist_ok=True)
 OUT.write_text(json.dumps(result, indent=2), encoding="utf-8")
+# Per-verdict confidence and correctness, for the plots.
+np.savez_compressed(
+    OUT.with_name("shift_demo_verdicts.npz"),
+    fever_conf=f_conf, fever_correct=f_ok, vitaminc_conf=v_conf, vitaminc_correct=v_ok,
+    threshold=np.array(t),
+)
 print(json.dumps(result, indent=2))
