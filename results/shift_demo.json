@@ -1,0 +1,72 @@
+{
+  "model": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+  "fever": "copenlu/fever_gold_evidence test split, 6000 random claims (seed 0)",
+  "vitaminc": "tals/vitaminc test split, 3000 random claims (seed 0)",
+  "fever_overall_accuracy": 0.8243333333333334,
+  "vitaminc_overall_accuracy": 0.6783333333333333,
+  "certificate_fever_first_half": {
+    "summary": "Settle verdicts with confidence >= 0.9931: 13.0% of verdicts (390 of 3000), observed accuracy 96.92%, accuracy >= 95.06% with 95% confidence.",
+    "threshold": 0.993101954460144,
+    "coverage": 0.13,
+    "accuracy": 0.9692307692307692,
+    "accuracy_lower_bound": 0.9506232721048712
+  },
+  "fever_held_out": {
+    "coverage": 0.12333333333333334,
+    "settled": 370,
+    "accuracy": 0.9756756756756757,
+    "accuracy_lower_bound": 0.9579378767662897
+  },
+  "vitaminc_same_threshold": {
+    "coverage": 0.07333333333333333,
+    "settled": 220,
+    "accuracy": 0.9045454545454545,
+    "accuracy_lower_bound": 0.8654555355791214
+  },
+  "audit_on_vitaminc": {
+    "rate": 0.125,
+    "audited": 28,
+    "errors": 2,
+    "alarm": false,
+    "accuracy_upper_bound": 0.9871585380029486,
+    "first_alarm": null
+  },
+  "probes_fever": {
+    "examples": 1697,
+    "note": "gold is not SUPPORTS and the verifier was right without the probe",
+    "results": [
+      {
+        "probe": "instruction",
+        "n": 1697,
+        "flipped_to_target": 3,
+        "flip_rate": 0.0017678255745433118,
+        "flip_rate_upper_bound": 0.004562641556100318,
+        "settled_wrong": 0
+      },
+      {
+        "probe": "certified",
+        "n": 1697,
+        "flipped_to_target": 5,
+        "flip_rate": 0.0029463759575721863,
+        "flip_rate_upper_bound": 0.00618501208849925,
+        "settled_wrong": 0
+      },
+      {
+        "probe": "restated",
+        "n": 1697,
+        "flipped_to_target": 1623,
+        "flip_rate": 0.9563936358279317,
+        "flip_rate_upper_bound": 0.9642497808265087,
+        "settled_wrong": 242
+      },
+      {
+        "probe": "label_words",
+        "n": 1697,
+        "flipped_to_target": 19,
+        "flip_rate": 0.011196228638774307,
+        "flip_rate_upper_bound": 0.016385527953203357,
+        "settled_wrong": 0
+      }
+    ]
+  }
+}

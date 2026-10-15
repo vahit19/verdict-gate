@@ -1,0 +1,25 @@
+[project]
+name = "verdict-gate"
+version = "0.1.0"
+description = "How many verdicts a machine can settle at a target accuracy, with a statistical guarantee"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Vahit FERYAD", email = "vahit.feryat@gmail.com" }]
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+demo = ["transformers>=4.40,<5", "torch>=2.2", "datasets>=2.18", "sentencepiece>=0.2", "protobuf>=4"]
+
+[project.scripts]
+verdict-gate = "verdict_gate.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/verdict_gate"]

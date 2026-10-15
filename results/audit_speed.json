@@ -1,0 +1,29 @@
+{
+  "audit_rate": 0.125,
+  "runs": 2000,
+  "stream_length": 20000,
+  "vitaminc_shifted": {
+    "resampled_from": "220 settled verdicts, 21 wrong (90.5% accurate)",
+    "alarm_rate_within_stream": 1.0,
+    "settled_until_alarm": {
+      "median": 1543.5,
+      "p90": 3905.3
+    },
+    "audited_until_alarm": {
+      "median": 192.0,
+      "p90": 488.10000000000014
+    }
+  },
+  "fever_control": {
+    "resampled_from": "370 settled verdicts, 9 wrong (97.6% accurate)",
+    "alarm_rate_within_stream": 0.001,
+    "settled_until_alarm": {
+      "median": 53.0,
+      "p90": 81.8
+    },
+    "audited_until_alarm": {
+      "median": 5.0,
+      "p90": 7.4
+    }
+  }
+}
