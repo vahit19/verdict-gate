@@ -2,6 +2,8 @@
 
 **How many verdicts can the machine settle without a human, at 95% accuracy, with a guarantee? And how do you know it stays true after launch?**
 
+![The question, the certificate, what happens on harder claims, the audit that catches it, and the seller probe](figures/verdict_gate_story.gif)
+
 A verification pipeline sends each claim to a model, and the model returns a verdict with a confidence. People settle the cases the model is unsure about. Raising the share the machine settles saves human time, but every confidently wrong machine verdict reaches users unreviewed. `verdict-gate` gives three tools for that trade-off:
 
 | | What it answers | How |
@@ -65,6 +67,7 @@ Reproduce the results (CPU is enough; about 20 minutes):
 ```bash
 uv run --extra demo python examples/shift_demo.py 6000 3000
 uv run python examples/audit_speed.py
+uv run --with pillow python examples/make_story_gif.py
 uv run --group dev pytest
 ```
 
