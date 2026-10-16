@@ -1,11 +1,18 @@
+<div align="center">
+
 # verdict-gate
+
+**Can you trust the judge, and how many verdicts can the machine settle without a human?**<br>
+Two studies on public data, with the code and every model call released.
 
 [![Paper (PDF)](https://img.shields.io/badge/paper-PDF-b31b1b)](studies/judge_self_preference/paper/self_preference.pdf)
 [![Study](https://img.shields.io/badge/study-LLM--judge%20self--preference-1d4ed8)](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
 [![Calls released](https://img.shields.io/badge/judge%20calls%20released-12%2C007-16803d)](studies/judge_self_preference/results)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-**Can you trust the judge, and how many verdicts can the machine settle without a human?** Two studies on public data, with the code and every model call released.
+[Paper](studies/judge_self_preference/paper/self_preference.pdf) · [Video](#video-walkthrough) · [Judge study](#grading-the-grader-does-an-llm-judge-favor-its-own-family) · [verdict-gate tools](#verdict-gate-certify-audit-probe) · [Reproduce](#use)
+
+</div>
 
 ## New: *Hiding the Name Does Not Hide the Judge* ([paper, PDF](studies/judge_self_preference/paper/self_preference.pdf))
 
@@ -15,9 +22,11 @@
 
 Two rules follow, and both can be checked in code: never let a model family judge a comparison that contains its own answer, and give judges claims, not prose. [Full results ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
 
-**Six-minute walkthrough (video):** the study told through a cooking-contest analogy.
+### Video walkthrough
 
 https://github.com/user-attachments/assets/1abdaeb6-ca49-40c5-8ac4-7869926f1300
+
+<sub>Six minutes, narrated in the first person: the study told through a cooking contest in which the judges are chefs from the competing restaurants. [Download (MP4, 9 MB)](videos/Hiding_the_AI_Judge.mp4)</sub>
 
 ## Grading the grader: does an LLM judge favor its own family?
 
