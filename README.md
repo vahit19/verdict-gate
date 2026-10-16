@@ -2,13 +2,13 @@
 
 **How many verdicts can the machine settle without a human, at 95% accuracy, with a guarantee? And how do you know it stays true after launch?**
 
-> **An LLM judge that grades its own model family is not neutral, and hiding the names does not fix it.** On 120 questions from Product.ai's published AI-shopping dataset, a Gemini judge picked Gemini's answer over a rival's 88–91% of the time, while a judge from a third family picked it 38–40% of the time. Shown two anonymized answers and told one is its own, Gemini finds its own 92% of the time. Claude, the judge that study used, showed no self-preference. Two rules held up: never let a model family grade itself, and show the judge the claims, not the prose. [Grading the grader ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
+> **An LLM judge that grades its own model family is not neutral, and hiding the names does not fix it.** On 120 questions from Product.ai's published AI-shopping dataset, a Gemini judge picked Gemini's answer over a rival's 88–91% of the time, while a judge from a third family picked it 38–40% of the time. Shown two anonymized answers and told one is its own, Gemini finds its own 92% of the time. Claude, the judge that study used, showed no self-preference. Rewriting every answer into one neutral style does not help (the judges recognize content, not style); showing the judge only the claims halves the bias. Two rules held up: never let a model family judge a pair that contains its own answer, and judge claims, not prose. [Grading the grader ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
 
 > **If seller-written text reaches the evidence, restating the claim is enough to get it approved.** On public fact-verification data, a widely used verifier settles 13% of verdicts at a certified 95% accuracy. But on harder claims the same threshold drops to 90.5%, and when the claim is restated inside the evidence, **14% of claims that should not be supported are approved with no human ever looking**. A 1-in-8 random audit catches the drop; the restating trick has to be blocked in the pipeline.
 
 ## Grading the grader: does an LLM judge favor its own family?
 
-When the judge is also one of the systems being judged, its verdicts can lean toward its own family. Product.ai's [AI Shopping Divergence Study](https://product.ai/research/ai-shopping-divergence-study/) disclosed exactly this: its scoring judge (Claude) is one of the four engines under measurement, engine names were anonymized, and the report notes that writing style can still leak identity. The study published every answer ([dataset, CC BY 4.0](https://product.ai/research/ai-shopping-divergence-study/codebook/)), so the concern can be measured. Three questions, on that data:
+When the judge is also one of the systems being judged, its verdicts can lean toward its own family. Product.ai's [AI Shopping Divergence Study](https://product.ai/research/ai-shopping-divergence-study/) disclosed exactly this: its scoring judge (Claude) is one of the four engines under measurement, engine names were anonymized, and the report notes that writing style can still leak identity. The study published every answer ([dataset, CC BY 4.0](https://product.ai/research/ai-shopping-divergence-study/codebook/)), so the concern can be measured. Paper: [*Hiding the Name Does Not Hide the Judge* (PDF)](studies/judge_self_preference/paper/self_preference.pdf). Four questions, on that data:
 
 ```mermaid
 flowchart LR
@@ -17,7 +17,8 @@ flowchart LR
     C --> D["3 judges = the 3 models<br/>that wrote the answers"]
     D --> E["Self-preference<br/>own-family judge vs<br/>third-family judge"]
     C --> F["Self-recognition<br/>'one of these is yours'"]
-    F --> G["full answer vs<br/>claims only"]
+    F --> G["full answer vs rewritten<br/>vs claims only"]
+    E --> G
     E --> H["Rule 1: no family<br/>grades itself"]
     B --> I["Rule 2: the judge sees<br/>claims, not prose"]
     G --> I
@@ -52,9 +53,21 @@ Averaged per family: Gemini +50 points (+45 to +56), ChatGPT +26 (+20 to +32), C
 
 ![Self-recognition from the full answer and from the claims only](figures/self_recognition.png)
 
-**What this means for a judge pipeline.** The study's choice held up here: its Claude judge showed no self-preference on these answers. The natural mitigation, re-judging with another vendor's model, is where the bias appears: a Gemini or GPT judge brought in as a cross-check would favor its own family by 26–50 points. Two rules follow, and both can be checked in code. First, no family grades itself: route each answer to judges from other families and report agreement between them. Second, judge claims, not prose: extract checkable claims first and give the judge those, which cuts self-recognition sharply. The per-call records make it possible to re-run any slice with a different judge.
+**4. Rewriting the style does not remove it; showing only the claims halves it.** Every answer was rewritten into plain paragraphs by a model from a fourth family (`qwen3-235b-a22b-2507`), which kept 99.0% of each answer's checkable claims. Recognition and preference barely moved: the judges recognize *what* was said, which products and figures, more than *how*. Shown only the claims, Gemini's self-preference halves and ChatGPT's nearly disappears. Across judges and views, recognition and preference move together (r = 0.94 over nine points). ([`extensions.py`](studies/judge_self_preference/extensions.py), [`extensions.json`](studies/judge_self_preference/results/extensions.json))
 
-**What this study does not show.** The judgments are preferences, not accuracy against ground truth; self-preference is measured relative to a third family's judge, which has its own taste. The signature is that each judge moves its own family up relative to the others. One model per family, one prompt (written for this study, not Product.ai's rubric), the free-tier answers, one sample per configuration, and 120 of the 217 scored questions. The report does not name the Claude version it used as a judge. Preference was not re-measured on claims-only inputs. Total cost: 9.51 USD.
+| Judge | Full answer | Rewritten into one style | Claims only |
+|---|---|---|---|
+| Gemini: recognizes its own / self-preference | 92% / **+50** | 83% / **+49** | 68% / +24 |
+| ChatGPT: recognizes its own / self-preference | 85% / **+26** | 86% / **+27** | 53% / +7 |
+| Claude: recognizes its own / self-preference | 43% / −6 | 45% / −6 | 43% / −8 |
+
+![Self-preference by judge and input view](figures/mitigations.png)
+
+The bias belongs to the family, not one model: with the paid-tier models as second judges (`gemini-3.1-pro-preview`, `gpt-5.6-sol`, `claude-opus-5`), on the 45–47 questions completed, it is +37, +29 and −12. And the judge decides the winner: the Gemini judge ranks Gemini first (89% of wins), the ChatGPT judge ranks ChatGPT first (90%), the Claude judge ranks ChatGPT first; third-family judges rank ChatGPT, then Claude, then Gemini.
+
+**What this means for a judge pipeline.** The study's choice held up here: its Claude judge showed no self-preference on these answers. The natural mitigation, re-judging with another vendor's model, is where the bias appears: a Gemini or GPT judge brought in as a cross-check would favor its own family by 26–50 points. Two rules follow, and both can be checked in code. First, no family judges a pair that contains its own answer: with three or more families there is always a judge that wrote neither answer. Second, judge claims, not prose: extract checkable claims first and give the judge those, which halves the bias but does not remove it, so it complements the first rule. A self-recognition test (four judgments per item) tells you which judges need the first rule. The per-call records make it possible to re-run any slice with a different judge.
+
+**What this study does not show.** The judgments are preferences, not accuracy against ground truth; self-preference is measured relative to a third family's judge, which has its own taste. The signature is that each judge moves its own family up relative to the others. One model per family, one prompt (written for this study, not Product.ai's rubric), the free-tier answers, one sample per configuration, and 120 of the 217 scored questions. No ground-truth test, where one answer is known to be right, was run. The second-judge run stopped at 45–47 questions per family when the account ran out of credit. The report does not name the Claude version it used as a judge. Total cost: 28.26 USD for 12,007 calls.
 
 ## verdict-gate: certify, audit, probe
 
