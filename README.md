@@ -17,7 +17,7 @@ Two rules follow, and both can be checked in code: never let a model family judg
 
 **Six-minute walkthrough (video):** the study told through a cooking-contest analogy.
 
-[![Hiding the AI Judge: six-minute walkthrough](figures/video_thumb.jpg)](videos/Hiding_the_AI_Judge.mp4)
+https://github.com/user-attachments/assets/1abdaeb6-ca49-40c5-8ac4-7869926f1300
 
 ## Grading the grader: does an LLM judge favor its own family?
 
