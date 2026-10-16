@@ -15,6 +15,10 @@
 
 Two rules follow, and both can be checked in code: never let a model family judge a comparison that contains its own answer, and give judges claims, not prose. [Full results ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
 
+**Six-minute walkthrough (video):** the study told through a cooking-contest analogy.
+
+[![Hiding the AI Judge: six-minute walkthrough](figures/video_thumb.jpg)](videos/Hiding_the_AI_Judge.mp4)
+
 ## Grading the grader: does an LLM judge favor its own family?
 
 When the judge is also one of the systems being judged, its verdicts can lean toward its own family. Product.ai's [AI Shopping Divergence Study](https://product.ai/research/ai-shopping-divergence-study/) disclosed exactly this: its scoring judge (Claude) is one of the four engines under measurement, engine names were anonymized, and the report notes that writing style can still leak identity. The study published every answer ([dataset, CC BY 4.0](https://product.ai/research/ai-shopping-divergence-study/codebook/)), so the concern can be measured. Paper: [*Hiding the Name Does Not Hide the Judge* (PDF)](studies/judge_self_preference/paper/self_preference.pdf). Four questions, on that data:
