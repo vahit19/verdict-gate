@@ -1,10 +1,19 @@
 # verdict-gate
 
-**How many verdicts can the machine settle without a human, at 95% accuracy, with a guarantee? And how do you know it stays true after launch?**
+[![Paper (PDF)](https://img.shields.io/badge/paper-PDF-b31b1b)](studies/judge_self_preference/paper/self_preference.pdf)
+[![Study](https://img.shields.io/badge/study-LLM--judge%20self--preference-1d4ed8)](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
+[![Calls released](https://img.shields.io/badge/judge%20calls%20released-12%2C007-16803d)](studies/judge_self_preference/results)
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-> **An LLM judge that grades its own model family is not neutral, and hiding the names does not fix it.** On 120 questions from Product.ai's published AI-shopping dataset, a Gemini judge picked Gemini's answer over a rival's 88–91% of the time, while a judge from a third family picked it 38–40% of the time. Shown two anonymized answers and told one is its own, Gemini finds its own 92% of the time. Claude, the judge that study used, showed no self-preference. Rewriting every answer into one neutral style does not help (the judges recognize content, not style); showing the judge only the claims halves the bias. Two rules held up: never let a model family judge a pair that contains its own answer, and judge claims, not prose. [Grading the grader ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
+**Can you trust the judge, and how many verdicts can the machine settle without a human?** Two studies on public data, with the code and every model call released.
 
-> **If seller-written text reaches the evidence, restating the claim is enough to get it approved.** On public fact-verification data, a widely used verifier settles 13% of verdicts at a certified 95% accuracy. But on harder claims the same threshold drops to 90.5%, and when the claim is restated inside the evidence, **14% of claims that should not be supported are approved with no human ever looking**. A 1-in-8 random audit catches the drop; the restating trick has to be blocked in the pipeline.
+## New: *Hiding the Name Does Not Hide the Judge* ([paper, PDF](studies/judge_self_preference/paper/self_preference.pdf))
+
+> **Ask Gemini to judge Gemini against a rival and it picks Gemini 9 times in 10. A judge from a third family picks that same answer 4 times in 10.** Hiding the engine names does not stop it: shown two anonymized answers and told one is its own, Gemini finds its own 92% of the time. Rewriting every answer into one neutral style does not stop it either, because the judges recognize *what* was said, not *how*. Showing the judge only the checkable claims cuts the bias by half or more. Measured on 8,794 real answers that Product.ai released from its AI-shopping study; Claude, the judge that study used, showed no self-preference.
+
+![Win rate of each family's answer under its own judge and under a third-family judge](figures/self_preference.png)
+
+Two rules follow, and both can be checked in code: never let a model family judge a comparison that contains its own answer, and give judges claims, not prose. [Full results ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
 
 ## Grading the grader: does an LLM judge favor its own family?
 
@@ -45,9 +54,7 @@ flowchart LR
 | Claude answer vs ChatGPT | 37.9% | 32.9% (Gemini) | +5 points (−3 to +13) |
 | Claude answer vs Gemini | 45.4% | 62.1% (ChatGPT) | −17 points (−25 to −8) |
 
-Averaged per family: Gemini +50 points (+45 to +56), ChatGPT +26 (+20 to +32), Claude −6 (−12 to 0). Intervals are bootstrap intervals over questions. Order was swapped for every pair, so position bias (Claude picked the first answer 60% of the time) cancels out. ([`self_preference.py`](studies/judge_self_preference/self_preference.py), [`self_preference.json`](studies/judge_self_preference/results/self_preference.json), every call in [`judge_calls.jsonl`](studies/judge_self_preference/results/judge_calls.jsonl))
-
-![Own-family judge vs third-family judge, per matchup](figures/self_preference.png)
+Averaged per family: Gemini +50 points (+45 to +56), ChatGPT +26 (+20 to +32), Claude −6 (−12 to 0). Intervals are bootstrap intervals over questions. Order was swapped for every pair, so position bias (Claude picked the first answer 60% of the time) cancels out. The figure at the top of this page shows each matchup. ([`self_preference.py`](studies/judge_self_preference/self_preference.py), [`self_preference.json`](studies/judge_self_preference/results/self_preference.json), every call in [`judge_calls.jsonl`](studies/judge_self_preference/results/judge_calls.jsonl))
 
 **3. The judges that favor themselves can also find themselves.** Shown its own answer and another engine's, and told one is its own, Gemini picks its own 92% of the time and ChatGPT 85% (chance: 50%). Shown only the claim lists, they drop to 68% and 53%. Claude picks its own 43% of the time with either view: it does not recognize its answers, and it is also the judge that does not favor them. (2,880 judgments.)
 
@@ -70,6 +77,8 @@ The bias belongs to the family, not one model: with the paid-tier models as seco
 **What this study does not show.** The judgments are preferences, not accuracy against ground truth; self-preference is measured relative to a third family's judge, which has its own taste. The signature is that each judge moves its own family up relative to the others. One model per family, one prompt (written for this study, not Product.ai's rubric), the free-tier answers, one sample per configuration, and 120 of the 217 scored questions. No ground-truth test, where one answer is known to be right, was run. The second-judge run stopped at 45–47 questions per family when the account ran out of credit. The report does not name the Claude version it used as a judge. Total cost: 28.26 USD for 12,007 calls.
 
 ## verdict-gate: certify, audit, probe
+
+> **If seller-written text reaches the evidence, restating the claim is enough to get it approved.** On public fact-verification data, a widely used verifier settles 13% of verdicts at a certified 95% accuracy. But on harder claims the same threshold drops to 90.5%, and when the claim is restated inside the evidence, **14% of claims that should not be supported are approved with no human ever looking**. A 1-in-8 random audit catches the drop; the restating trick has to be blocked in the pipeline.
 
 ![The question, the certificate, what happens on harder claims, the audit that catches it, and the seller probe](figures/verdict_gate_story.gif)
 
