@@ -4,6 +4,8 @@
 
 > **If seller-written text reaches the evidence, restating the claim is enough to get it approved.** On public fact-verification data, a widely used verifier settles 13% of verdicts at a certified 95% accuracy. But on harder claims the same threshold drops to 90.5%, and when the claim is restated inside the evidence, **14% of claims that should not be supported are approved with no human ever looking**. A 1-in-8 random audit catches the drop; the restating trick has to be blocked in the pipeline.
 
+> **An LLM judge that grades its own model family is not neutral, and hiding the names does not fix it.** On 120 questions from Product.ai's published AI-shopping dataset, a Gemini judge picked Gemini's answer over a rival's 88–91% of the time, while a judge from a third family picked it 38–40% of the time. Shown two anonymized answers and told one is its own, Gemini finds its own 92% of the time. Claude, the judge that study used, showed no self-preference. Two rules held up: never let a model family grade itself, and show the judge the claims, not the prose. [Grading the grader ↓](#grading-the-grader-does-an-llm-judge-favor-its-own-family)
+
 ![The question, the certificate, what happens on harder claims, the audit that catches it, and the seller probe](figures/verdict_gate_story.gif)
 
 A verification pipeline sends each claim to a model, and the model returns a verdict with a confidence. People settle the cases the model is unsure about. Raising the share the machine settles saves human time, but every confidently wrong machine verdict reaches users unreviewed. `verdict-gate` gives three tools for that trade-off:
@@ -74,6 +76,56 @@ The verifier almost never follows instructions or claimed certifications, but it
 - One verifier and one random sample (seed 0). A certificate assumes the verdicts used to compute it are representative of the ones it will be applied to; result 2 shows what happens when they are not.
 - The four probes are a fixed list. A verifier that passes them can still be fooled in other ways; the random audit is what covers the ways nobody listed.
 
+## Grading the grader: does an LLM judge favor its own family?
+
+When the judge is also one of the systems being judged, its verdicts can lean toward its own family. Product.ai's [AI Shopping Divergence Study](https://product.ai/research/ai-shopping-divergence-study/) disclosed exactly this: its scoring judge (Claude) is one of the four engines under measurement, engine names were anonymized, and the report notes that writing style can still leak identity. The study published every answer ([dataset, CC BY 4.0](https://product.ai/research/ai-shopping-divergence-study/codebook/)), so the concern can be measured. Three questions, on that data:
+
+```mermaid
+flowchart LR
+    A["Published answers<br/>8,794 from 4 engines"] --> B["Classifier<br/>can the text name its engine?"]
+    A --> C["120 questions<br/>Claude, ChatGPT, Gemini answers"]
+    C --> D["3 judges = the 3 models<br/>that wrote the answers"]
+    D --> E["Self-preference<br/>own-family judge vs<br/>third-family judge"]
+    C --> F["Self-recognition<br/>'one of these is yours'"]
+    F --> G["full answer vs<br/>claims only"]
+    E --> H["Rule 1: no family<br/>grades itself"]
+    B --> I["Rule 2: the judge sees<br/>claims, not prose"]
+    G --> I
+    classDef ai fill:#fef3c7,stroke:#b45309,color:#18202c
+    classDef code fill:#dbeafe,stroke:#1d4ed8,color:#18202c
+    classDef out fill:#dcfce7,stroke:#16803d,color:#18202c
+    class D ai
+    class B,E,F,G code
+    class H,I out
+```
+
+**1. Anonymized answers still name their engine.** A plain character n-gram classifier, trained on some questions and tested on questions it never saw, names which of the four engines wrote an answer 98.0% of the time after links and formatting are removed (chance: 25%). Claude's answers are identified essentially always. Reduced to the checkable claims (prices, model numbers, numbers with units), the same classifier drops to 41.9%. With engine labels shuffled, it scores 25.0%, so the pipeline itself leaks nothing. ([`identity_leak.py`](studies/judge_self_preference/identity_leak.py), [`identity_leak.json`](studies/judge_self_preference/results/identity_leak.json))
+
+![A classifier names the engine of an anonymized answer 98% of the time; 42% from claims only; 25% with shuffled labels](figures/identity_leak.png)
+
+**2. Two of the three judges favor their own family; Claude does not.** Each judge is the exact model that wrote one of the answers (free tier: `claude-sonnet-5`, `gpt-5.6-luna`, `gemini-3.6-flash`). For every question and every pair of engines, each judge picked the more factually reliable answer, in both orders (2,160 judgments). Self-preference is how much more often a family's answer wins when its own model judges than when the third family judges the same matchup.
+
+| Matchup | Own-family judge | Third-family judge | Self-preference (95% CI) |
+|---|---|---|---|
+| Gemini answer vs Claude | 90.8% | 37.9% (ChatGPT) | **+53 points** (+45 to +62) |
+| Gemini answer vs ChatGPT | 87.5% | 39.6% (Claude) | **+48 points** (+40 to +56) |
+| ChatGPT answer vs Claude | 90.0% | 67.1% (Gemini) | **+23 points** (+16 to +30) |
+| ChatGPT answer vs Gemini | 89.2% | 60.4% (Claude) | **+29 points** (+20 to +37) |
+| Claude answer vs ChatGPT | 37.9% | 32.9% (Gemini) | +5 points (−3 to +13) |
+| Claude answer vs Gemini | 45.4% | 62.1% (ChatGPT) | −17 points (−25 to −8) |
+
+Averaged per family: Gemini +50 points (+45 to +56), ChatGPT +26 (+20 to +32), Claude −6 (−12 to 0). Intervals are bootstrap intervals over questions. Order was swapped for every pair, so position bias (Claude picked the first answer 60% of the time) cancels out. ([`self_preference.py`](studies/judge_self_preference/self_preference.py), [`self_preference.json`](studies/judge_self_preference/results/self_preference.json), every call in [`judge_calls.jsonl`](studies/judge_self_preference/results/judge_calls.jsonl))
+
+![Own-family judge vs third-family judge, per matchup](figures/self_preference.png)
+
+**3. The judges that favor themselves can also find themselves.** Shown its own answer and another engine's, and told one is its own, Gemini picks its own 92% of the time and ChatGPT 85% (chance: 50%). Shown only the claim lists, they drop to 68% and 53%. Claude picks its own 43% of the time with either view: it does not recognize its answers, and it is also the judge that does not favor them. (2,880 judgments.)
+
+![Self-recognition from the full answer and from the claims only](figures/self_recognition.png)
+
+**What this means for a judge pipeline.** The study's choice held up here: its Claude judge showed no self-preference on these answers. The natural mitigation, re-judging with another vendor's model, is where the bias appears: a Gemini or GPT judge brought in as a cross-check would favor its own family by 26–50 points. Two rules follow, and both can be checked in code. First, no family grades itself: route each answer to judges from other families and report agreement between them. Second, judge claims, not prose: extract checkable claims first and give the judge those, which cuts self-recognition sharply. The per-call records make it possible to re-run any slice with a different judge.
+
+**What this study does not show.** The judgments are preferences, not accuracy against ground truth; self-preference is measured relative to a third family's judge, which has its own taste. The signature is that each judge moves its own family up relative to the others. One model per family, one prompt (written for this study, not Product.ai's rubric), the free-tier answers, one sample per configuration, and 120 of the 217 scored questions. The report does not name the Claude version it used as a judge. Preference was not re-measured on claims-only inputs. Total cost: 9.51 USD.
+
 ## Use
 
 ```bash
@@ -103,6 +155,15 @@ uv run python examples/audit_speed.py
 uv run --with pillow python examples/make_story_gif.py
 uv run --with matplotlib python examples/make_figures.py
 uv run --group dev pytest
+```
+
+Reproduce the judge study (download the CSV from the [study page](https://product.ai/research/ai-shopping-divergence-study/); the judge run needs an OpenRouter key and costs about 10 USD):
+
+```bash
+cd studies/judge_self_preference
+uv run --no-project --with scikit-learn --with pandas python identity_leak.py DATA.csv results/identity_leak.json
+uv run --no-project --with requests --with pandas python self_preference.py DATA.csv run 120
+uv run --no-project --with matplotlib --with numpy python make_figures.py results ../../figures
 ```
 
 The tests check the bounds against closed forms, that certified thresholds miss the target no more than delta of the time in simulation, and that the monitor's false-alarm rate stays below delta when checked after every audit.

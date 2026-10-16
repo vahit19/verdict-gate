@@ -1,0 +1,238 @@
+{
+  "judges": {
+    "claude": "anthropic/claude-sonnet-5",
+    "gemini": "google/gemini-3.6-flash",
+    "chatgpt": "openai/gpt-5.6-luna"
+  },
+  "questions": 120,
+  "answers": "free tier, sample 0",
+  "cost_usd_this_run": 9.509085800000028,
+  "pairwise": {
+    "claude_vs_gemini": {
+      "neutral_judge": "chatgpt",
+      "win_rate_judge_self": {
+        "mean": 0.45416666666666666,
+        "lo": 0.37916666666666665,
+        "hi": 0.5333333333333333,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.6208333333333333,
+        "lo": 0.5375,
+        "hi": 0.6958333333333333,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.09166666666666666,
+        "lo": 0.05,
+        "hi": 0.14166666666666666,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": -0.16666666666666666,
+        "lo": -0.25,
+        "hi": -0.08333333333333333,
+        "n": 120
+      }
+    },
+    "claude_vs_chatgpt": {
+      "neutral_judge": "gemini",
+      "win_rate_judge_self": {
+        "mean": 0.37916666666666665,
+        "lo": 0.30833333333333335,
+        "hi": 0.45,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.32916666666666666,
+        "lo": 0.2625,
+        "hi": 0.4,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.1,
+        "lo": 0.058333333333333334,
+        "hi": 0.15,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": 0.05,
+        "lo": -0.029166666666666667,
+        "hi": 0.12927083333333184,
+        "n": 120
+      }
+    },
+    "gemini_vs_claude": {
+      "neutral_judge": "chatgpt",
+      "win_rate_judge_self": {
+        "mean": 0.9083333333333333,
+        "lo": 0.8583333333333333,
+        "hi": 0.95,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.37916666666666665,
+        "lo": 0.30416666666666664,
+        "hi": 0.4542708333333318,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.5458333333333333,
+        "lo": 0.4708333333333333,
+        "hi": 0.6208333333333333,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": 0.5291666666666667,
+        "lo": 0.44572916666666673,
+        "hi": 0.6166666666666667,
+        "n": 120
+      }
+    },
+    "gemini_vs_chatgpt": {
+      "neutral_judge": "claude",
+      "win_rate_judge_self": {
+        "mean": 0.875,
+        "lo": 0.8208333333333333,
+        "hi": 0.9291666666666667,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.3958333333333333,
+        "lo": 0.325,
+        "hi": 0.4708333333333333,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.10833333333333334,
+        "lo": 0.0625,
+        "hi": 0.1625,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": 0.4791666666666667,
+        "lo": 0.4,
+        "hi": 0.5583333333333333,
+        "n": 120
+      }
+    },
+    "chatgpt_vs_claude": {
+      "neutral_judge": "gemini",
+      "win_rate_judge_self": {
+        "mean": 0.9,
+        "lo": 0.85,
+        "hi": 0.9416666666666667,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.6708333333333333,
+        "lo": 0.6,
+        "hi": 0.7416666666666667,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.6208333333333333,
+        "lo": 0.5541666666666667,
+        "hi": 0.6875,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": 0.22916666666666666,
+        "lo": 0.15833333333333333,
+        "hi": 0.30416666666666664,
+        "n": 120
+      }
+    },
+    "chatgpt_vs_gemini": {
+      "neutral_judge": "claude",
+      "win_rate_judge_self": {
+        "mean": 0.8916666666666667,
+        "lo": 0.8415625,
+        "hi": 0.9416666666666667,
+        "n": 120
+      },
+      "win_rate_judge_neutral": {
+        "mean": 0.6041666666666666,
+        "lo": 0.5291666666666667,
+        "hi": 0.675,
+        "n": 120
+      },
+      "win_rate_judge_opponent": {
+        "mean": 0.125,
+        "lo": 0.075,
+        "hi": 0.18333333333333332,
+        "n": 120
+      },
+      "self_preference": {
+        "mean": 0.2875,
+        "lo": 0.20416666666666666,
+        "hi": 0.36666666666666664,
+        "n": 120
+      }
+    }
+  },
+  "self_preference_by_family": {
+    "claude": {
+      "mean": -0.058333333333333334,
+      "lo": -0.11875,
+      "hi": 0.0020833333333333333,
+      "n": 120
+    },
+    "gemini": {
+      "mean": 0.5041666666666667,
+      "lo": 0.44583333333333336,
+      "hi": 0.5625,
+      "n": 120
+    },
+    "chatgpt": {
+      "mean": 0.25833333333333336,
+      "lo": 0.20208333333333334,
+      "hi": 0.31666666666666665,
+      "n": 120
+    }
+  },
+  "position_A_rate": {
+    "claude": 0.5986111111111111,
+    "gemini": 0.5347222222222222,
+    "chatgpt": 0.5347222222222222
+  },
+  "self_recognition": {
+    "claude_full": {
+      "mean": 0.43333333333333335,
+      "lo": 0.4,
+      "hi": 0.46458333333333335,
+      "n": 120
+    },
+    "gemini_full": {
+      "mean": 0.925,
+      "lo": 0.89375,
+      "hi": 0.9520833333333333,
+      "n": 120
+    },
+    "chatgpt_full": {
+      "mean": 0.8458333333333333,
+      "lo": 0.80625,
+      "hi": 0.8833333333333333,
+      "n": 120
+    },
+    "claude_claims": {
+      "mean": 0.4270833333333333,
+      "lo": 0.37078125,
+      "hi": 0.48541666666666666,
+      "n": 120
+    },
+    "gemini_claims": {
+      "mean": 0.6770833333333334,
+      "lo": 0.61875,
+      "hi": 0.7333333333333333,
+      "n": 120
+    },
+    "chatgpt_claims": {
+      "mean": 0.5291666666666667,
+      "lo": 0.475,
+      "hi": 0.5875,
+      "n": 120
+    }
+  },
+  "unparsed_or_failed": 0
+}

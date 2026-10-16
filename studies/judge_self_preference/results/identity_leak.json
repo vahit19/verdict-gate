@@ -1,0 +1,65 @@
+{
+  "answers": 8793,
+  "questions": 220,
+  "chance_4way": 0.25019902194927784,
+  "raw": {
+    "accuracy_4way": 0.9790742636187877,
+    "recall_by_engine": {
+      "chatgpt": 0.9227272727272727,
+      "claude": 1.0,
+      "gemini": 0.998180991359709,
+      "perplexity": 0.9954545454545455
+    },
+    "claude_vs_rest_auc": 0.9999996546533458,
+    "mean_chars": 2537.5835323552824
+  },
+  "no_urls": {
+    "accuracy_4way": 0.9799840782440578,
+    "recall_by_engine": {
+      "chatgpt": 0.9486363636363636,
+      "claude": 0.9977210574293528,
+      "gemini": 0.9954524783992724,
+      "perplexity": 0.9781818181818182
+    },
+    "claude_vs_rest_auc": 0.9999913663336466,
+    "mean_chars": 2315.791424997157
+  },
+  "claims": {
+    "accuracy_4way": 0.41874218128056406,
+    "recall_by_engine": {
+      "chatgpt": 0.48863636363636365,
+      "claude": 0.46900638103919784,
+      "gemini": 0.4633924511141428,
+      "perplexity": 0.2540909090909091
+    },
+    "claude_vs_rest_auc": 0.7012618483256834,
+    "mean_chars": 42.807574206755376
+  },
+  "shuffled_label_control_accuracy": 0.25008529512111904,
+  "tells": {
+    "utm_source=openai": {
+      "chatgpt": 0.7781818181818182,
+      "claude": 0.0,
+      "gemini": 0.0,
+      "perplexity": 0.0
+    },
+    "vertexaisearch redirect": {
+      "chatgpt": 0.0,
+      "claude": 0.0,
+      "gemini": 0.0,
+      "perplexity": 0.0
+    },
+    "numeric [n] citations": {
+      "chatgpt": 0.0,
+      "claude": 0.00045578851412944393,
+      "gemini": 0.001364256480218281,
+      "perplexity": 0.0013636363636363637
+    },
+    "markdown link": {
+      "chatgpt": 0.9327272727272727,
+      "claude": 0.00045578851412944393,
+      "gemini": 0.002273760800363802,
+      "perplexity": 0.7572727272727273
+    }
+  }
+}
